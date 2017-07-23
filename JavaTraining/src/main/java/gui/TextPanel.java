@@ -1,4 +1,4 @@
-package com.forszpaniak;
+package gui;
 
 import java.awt.BorderLayout;
 

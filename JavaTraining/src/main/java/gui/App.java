@@ -1,4 +1,4 @@
-package com.forszpaniak;
+package gui;
 
 import javax.swing.SwingUtilities;
 
