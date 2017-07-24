@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -13,10 +12,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import com.sun.glass.events.KeyEvent;
+
+import controller.Controller;
 
 public class MainFrame extends JFrame {
 
@@ -24,12 +24,16 @@ public class MainFrame extends JFrame {
 	private Toolbar toolbar;
 	private FormPanel formPanel;
 	private JFileChooser fileChooser;
+	private Controller controller;
+	private TablePanel tablePanel;
 
 	public MainFrame() {
 		super("Hello World");
 
 		setLayout(new BorderLayout());
 
+		controller = new Controller();
+		tablePanel = new TablePanel();
 		fileChooser = new JFileChooser();
 		fileChooser.addChoosableFileFilter(new PersonFileFilter());
 		toolbar = new Toolbar();
@@ -44,19 +48,17 @@ public class MainFrame extends JFrame {
 
 		formPanel.setFormListener(new FormListener() {
 			public void formEventOccurred(FormEvent e) {
-				String name = e.getName();
-				String occupation = e.getOccupation();
-				int ageCat = e.getAgeCategory();
-				String empCat = e.getEmploymentCategory();
-				String gender = e.getGender();
 
-				textPanel.appendText(name + ": " + occupation + ": " + ageCat + ", " + empCat + ":" + gender + "\n");
+				controller.addPerson(e);
+				tablePanel.refresh();
 			}
 		});
 
+		tablePanel.setData(controller.getPeople());
+
 		add(formPanel, BorderLayout.WEST);
 		add(toolbar, BorderLayout.NORTH);
-		add(textPanel, BorderLayout.CENTER);
+		add(tablePanel, BorderLayout.CENTER);
 
 		setMinimumSize(new Dimension(500, 400));
 		setSize(600, 500);
@@ -96,10 +98,10 @@ public class MainFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				String showInputDialog = JOptionPane.showInputDialog(MainFrame.this, "Enter the user name", "Enter user name", JOptionPane.OK_OPTION|JOptionPane.QUESTION_MESSAGE);
+				String showInputDialog = JOptionPane.showInputDialog(MainFrame.this, "Enter the user name",
+						"Enter user name", JOptionPane.OK_OPTION | JOptionPane.QUESTION_MESSAGE);
 				System.out.println(showInputDialog);
-				
-				
+
 				int action = JOptionPane.showConfirmDialog(MainFrame.this, "Do you really want to exit the app?",
 						"Confirm exit", JOptionPane.OK_CANCEL_OPTION);
 				if (action == JOptionPane.OK_OPTION) {
@@ -109,25 +111,25 @@ public class MainFrame extends JFrame {
 		});
 
 		importDataItem.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+				if (fileChooser.showOpenDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
 					System.out.println(fileChooser.getSelectedFile());
 				}
 			}
 		});
 
 		exportDataItem.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if(fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
+				if (fileChooser.showSaveDialog(MainFrame.this) == JFileChooser.APPROVE_OPTION) {
 					System.out.println(fileChooser.getSelectedFile());
 				}
 			}
 		});
-		
+
 		show.add(showFormItem);
 		windowMenu.add(show);
 		menuBar.add(fileMenu);
