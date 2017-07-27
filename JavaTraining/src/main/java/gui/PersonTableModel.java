@@ -37,7 +37,6 @@ public class PersonTableModel extends AbstractTableModel {
 		switch (column) {
 		case 0:
 			return person.getId();
-
 		case 1:
 			return person.getName();
 		case 2:
